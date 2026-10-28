@@ -1,0 +1,174 @@
+[
+ {
+  "createdAt": "2026-10-23T12:12:46.025Z",
+  "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+  "datasetName": "sregym-lite",
+  "description": "HolmesGPT (openrouter/anthropic/claude-sonnet-5.5) on SREGym with noise, diagnosis stage",
+  "id": "3a4579d0-94b5-4f0c-a6bf-e25a7319f3ac",
+  "items": [
+   {
+    "createdAt": "2026-10-23T12:56:57.306Z",
+    "datasetItemId": "sregym-lite:env_variable_shadowing_astronomy_shop",
+    "datasetRunId": "3a4579d0-94b5-4f0c-a6bf-e25a7319f3ac",
+    "datasetRunName": "holmes-noise-run-1",
+    "id": "f50553ec-e392-437e-9349-717437ee4eb3",
+    "observationId": null,
+    "traceId": "0a5a336def8f68c5d0552b88de605488",
+    "updatedAt": "2026-10-23T12:56:57.306Z"
+   },
+   {
+    "createdAt": "2026-10-23T12:38:39.335Z",
+    "datasetItemId": "sregym-lite:duplicate_pvc_mounts_social_network",
+    "datasetRunId": "3a4579d0-94b5-4f0c-a6bf-e25a7319f3ac",
+    "datasetRunName": "holmes-noise-run-1",
+    "id": "e359271f-25e3-4117-b0f8-3e63fb1f764e",
+    "observationId": null,
+    "traceId": "ab46e879c8bbf505a87c325a23542639",
+    "updatedAt": "2026-10-23T12:38:39.335Z"
+   },
+   {
+    "createdAt": "2026-10-23T12:26:20.782Z",
+    "datasetItemId": "sregym-lite:service_dns_resolution_failure_social_network",
+    "datasetRunId": "3a4579d0-94b5-4f0c-a6bf-e25a7319f3ac",
+    "datasetRunName": "holmes-noise-run-1",
+    "id": "feb2ea33-1ded-40de-b40d-6402056eae61",
+    "observationId": null,
+    "traceId": "2f88cd8c5f6eb8eb058e0367f4f45dd9",
+    "updatedAt": "2026-10-23T12:26:20.782Z"
+   },
+   {
+    "createdAt": "2026-10-23T12:19:22.222Z",
+    "datasetItemId": "sregym-lite:service_wrong_pod_selection_hotel_reservation",
+    "datasetRunId": "3a4579d0-94b5-4f0c-a6bf-e25a7319f3ac",
+    "datasetRunName": "holmes-noise-run-1",
+    "id": "f4ef282a-fe8f-43ec-947c-deec39ea64d8",
+    "observationId": null,
+    "traceId": "a2f7d8f60136802a19ad6544624643c0",
+    "updatedAt": "2026-10-23T12:19:22.222Z"
+   },
+   {
+    "createdAt": "2026-10-23T12:12:46.025Z",
+    "datasetItemId": "sregym-lite:network_policy_block",
+    "datasetRunId": "3a4579d0-94b5-4f0c-a6bf-e25a7319f3ac",
+    "datasetRunName": "holmes-noise-run-1",
+    "id": "c2094e60-82ac-4740-b933-221f169d3e72",
+    "observationId": null,
+    "traceId": "1cd7e4ad06fb8cedd19acc877f0490e3",
+    "updatedAt": "2026-10-23T12:12:46.025Z"
+   }
+  ],
+  "metadata": {
+   "holmes_model": "openrouter/anthropic/claude-sonnet-5.5"
+  },
+  "name": "holmes-noise-run-1",
+  "updatedAt": "2026-10-23T12:12:46.025Z"
+ },
+ {
+  "createdAt": "2026-10-23T13:09:39.227Z",
+  "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+  "datasetName": "sregym-lite",
+  "description": "HolmesGPT (openrouter/anthropic/claude-sonnet-5.5) on SREGym with noise, diagnosis stage",
+  "id": "00d11369-5c6a-490b-8e6a-94c97b97266d",
+  "items": [
+   {
+    "createdAt": "2026-10-23T13:09:39.227Z",
+    "datasetItemId": "sregym-lite:duplicate_pvc_mounts_social_network",
+    "datasetRunId": "00d11369-5c6a-490b-8e6a-94c97b97266d",
+    "datasetRunName": "holmes-noise-run-2-steps100",
+    "id": "1fd72c18-ebcb-4935-a012-8077a899f5f0",
+    "observationId": null,
+    "traceId": "37ccac24b0afd964d8b25d96445a2cfc",
+    "updatedAt": "2026-10-23T13:09:39.227Z"
+   }
+  ],
+  "metadata": {
+   "holmes_model": "openrouter/anthropic/claude-sonnet-5.5"
+  },
+  "name": "holmes-noise-run-2-steps100",
+  "updatedAt": "2026-10-23T13:09:39.227Z"
+ },
+ {
+  "createdAt": "2026-10-23T15:05:08.570Z",
+  "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+  "datasetName": "sregym-lite",
+  "description": "Replays HolmesGPT's answers from 'holmes-noise-run-1' to check the 'sregym' evaluator. Not a new Holmes run.",
+  "id": "5d1d8d14-ff7c-4cb8-aff6-be19a262012a",
+  "items": [
+   {
+    "createdAt": "2026-10-23T15:05:08.617Z",
+    "datasetItemId": "sregym-lite:network_policy_block",
+    "datasetRunId": "5d1d8d14-ff7c-4cb8-aff6-be19a262012a",
+    "datasetRunName": "replay-holmes-noise-run-1-1792767906",
+    "id": "bee54e39-923f-46c8-bbd0-ec50d983fc25",
+    "observationId": "e822eedace8397b2",
+    "traceId": "0c8f0756d746292e14b1d465e6df8113",
+    "updatedAt": "2026-10-23T15:05:08.617Z"
+   },
+   {
+    "createdAt": "2026-10-23T15:05:08.607Z",
+    "datasetItemId": "sregym-lite:service_wrong_pod_selection_hotel_reservation",
+    "datasetRunId": "5d1d8d14-ff7c-4cb8-aff6-be19a262012a",
+    "datasetRunName": "replay-holmes-noise-run-1-1792767906",
+    "id": "edd68443-921e-47dc-ad84-4f2846ef821f",
+    "observationId": "146134ed283e8b89",
+    "traceId": "faff80e5b88ab2f14a776346e0fb4af2",
+    "updatedAt": "2026-10-23T15:05:08.607Z"
+   },
+   {
+    "createdAt": "2026-10-23T15:05:08.606Z",
+    "datasetItemId": "sregym-lite:service_dns_resolution_failure_social_network",
+    "datasetRunId": "5d1d8d14-ff7c-4cb8-aff6-be19a262012a",
+    "datasetRunName": "replay-holmes-noise-run-1-1792767906",
+    "id": "2e88e8cc-e772-40c4-a155-841c4c07a593",
+    "observationId": "26cdc3c196cc0104",
+    "traceId": "b71de3d73dde030361f3e93b1da72ba3",
+    "updatedAt": "2026-10-23T15:05:08.606Z"
+   },
+   {
+    "createdAt": "2026-10-23T15:05:08.580Z",
+    "datasetItemId": "sregym-lite:duplicate_pvc_mounts_social_network",
+    "datasetRunId": "5d1d8d14-ff7c-4cb8-aff6-be19a262012a",
+    "datasetRunName": "replay-holmes-noise-run-1-1792767906",
+    "id": "2d5180aa-6dfb-4174-a580-eead5d7fac8a",
+    "observationId": "e4f43e942e8198c7",
+    "traceId": "e397ec576d5262bafdc0935bb191b5cf",
+    "updatedAt": "2026-10-23T15:05:08.580Z"
+   },
+   {
+    "createdAt": "2026-10-23T15:05:08.570Z",
+    "datasetItemId": "sregym-lite:env_variable_shadowing_astronomy_shop",
+    "datasetRunId": "5d1d8d14-ff7c-4cb8-aff6-be19a262012a",
+    "datasetRunName": "replay-holmes-noise-run-1-1792767906",
+    "id": "f65c51fc-0d47-4556-9378-2a7f4fe9eaee",
+    "observationId": "a2463bd04d7c6e06",
+    "traceId": "5d246bff54c39b2d03d83a208b71d473",
+    "updatedAt": "2026-10-23T15:05:08.570Z"
+   }
+  ],
+  "metadata": {},
+  "name": "replay-holmes-noise-run-1-1792767906",
+  "updatedAt": "2026-10-23T15:05:08.570Z"
+ },
+ {
+  "createdAt": "2026-10-23T15:05:09.581Z",
+  "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+  "datasetName": "sregym-lite",
+  "description": "Replays HolmesGPT's answers from 'holmes-noise-run-2-steps100' to check the 'sregym' evaluator. Not a new Holmes run.",
+  "id": "71f9837f-88d9-40fb-9227-16b35dd2e30f",
+  "items": [
+   {
+    "createdAt": "2026-10-23T15:05:09.581Z",
+    "datasetItemId": "sregym-lite:duplicate_pvc_mounts_social_network",
+    "datasetRunId": "71f9837f-88d9-40fb-9227-16b35dd2e30f",
+    "datasetRunName": "replay-holmes-noise-run-2-steps100-1792767906",
+    "id": "7bc17d59-2675-4a36-b739-dad4f5168143",
+    "observationId": "13d7bf56eece6d46",
+    "traceId": "32147adbce2e806e84e1947d8e090558",
+    "updatedAt": "2026-10-23T15:05:09.581Z"
+   }
+  ],
+  "metadata": {},
+  "name": "replay-holmes-noise-run-2-steps100-1792767906",
+  "updatedAt": "2026-10-23T15:05:09.581Z"
+ }
+]

@@ -1,0 +1,4 @@
+.env
+__pycache__/
+# Downloaded by make from Langfuse's release tag; see the Makefile.
+langfuse/

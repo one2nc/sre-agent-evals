@@ -1,0 +1,37 @@
+# The demo, layered on Langfuse's own compose file.
+#
+# langfuse/docker-compose.yml is Langfuse's official docker-compose.yml, which
+# `make` downloads from the v$LANGFUSE_VERSION release tag and checks against its
+# SHA-256 (see the Makefile); it is not kept in the repo. It is configured only
+# through the environment variables it reads, set in .env. This file adds three
+# things on top (the Makefile passes both files):
+#
+#   1. Langfuse's images pinned to LANGFUSE_VERSION, the version the study's data
+#      was recorded on (the official file uses the floating `:3` tag).
+#   2. The web app and MinIO published on 127.0.0.1 only. The official file
+#      publishes them on every interface, and the demo's sign-in, API keys and
+#      secrets are public (README, .env.example).
+#   3. The `demo` service: one-shot evaluation steps, `make <step>` (profile "tools").
+
+name: langfuse-sregym-demo
+
+services:
+  langfuse-web:
+    image: docker.io/langfuse/langfuse:${LANGFUSE_VERSION:?run through make, which sets LANGFUSE_VERSION}
+    ports: !override
+      - 127.0.0.1:3000:3000
+
+  langfuse-worker:
+    image: docker.io/langfuse/langfuse-worker:${LANGFUSE_VERSION:?run through make, which sets LANGFUSE_VERSION}
+
+  minio:
+    ports: !override
+      - 127.0.0.1:9090:9000
+      - 127.0.0.1:9091:9001
+
+  demo:
+    build: .
+    profiles: [tools]
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

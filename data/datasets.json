@@ -1,0 +1,733 @@
+[
+ {
+  "createdAt": "2026-10-23T10:03:05.715Z",
+  "description": "SREGym 'sregym-lite' problems. Expected output is the root cause the diagnosis judge grades against.",
+  "expectedOutputSchema": null,
+  "id": "cmvksxnqr0003pa07bgxrjc0e",
+  "inputSchema": null,
+  "items": [
+   {
+    "createdAt": "2026-10-23T10:03:39.437Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=CronJob/audit-log-archiver; namespace=hotel-reservation || The CronJob 'audit-log-archiver' in namespace 'hotel-reservation' schedules a pod every minute. Its jobTemplate contains two regular containers: a primary container ('archiver') that performs a short archival step and exits cleanly, and a sidecar container ('fluent-bit-sidecar') that runs a long-running log-shipper process. Because Kubernetes considers a Job 'Complete' only when every container in the pod terminates, and the sidecar is a regular (non-native) container with no termination handling, the Pod stays Running indefinitely after the primary exits. Each schedule produces a new active Job that never completes. 'successfulJobsHistoryLimit' does not apply to active Jobs, so they accumulate without bound, visible as Jobs stuck at COMPLETIONS=0/1 and pods whose primary container shows Terminated/Completed while the sidecar shows Running. The acceptable fix is to convert the sidecar to the Kubernetes 1.28+ native pattern by moving it to initContainers with restartPolicy=Always (KEP-753); the kubelet then SIGTERMs the sidecar after the primary exits, allowing the Pod to reach Succeeded and the Job to reach Complete. activeDeadlineSeconds (time-bombs the workload), removing the sidecar container (silently breaks log forwarding to the SIEM), and deleting the CronJob entirely (removes the workload) are all rejected. The agent must also clean up the already-accumulated active Jobs."
+    ],
+    "id": "sregym-lite:cronjob_sidecar_blocks_completion_hotel_reservation",
+    "input": {
+     "app_description": "A hotel reservation application built with Go and gRPC, providing backend in-memory and persistent databases, a recommender system for hotel recommendations, and a functionality to place reservations.",
+     "app_name": "Hotel Reservation",
+     "namespace": "hotel-reservation",
+     "namespaces": [
+      "hotel-reservation"
+     ],
+     "problem_id": "cronjob_sidecar_blocks_completion_hotel_reservation",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": null,
+     "failure_to_simulate": null,
+     "fault_level": null,
+     "mitigation_oracle": "CronJobSidecarBlocksCompletionMitigationOracle",
+     "origin": null,
+     "problem_class": "CronJobSidecarBlocksCompletionHotelReservation",
+     "problem_doc": "A CronJob whose pod has a non-terminating sidecar causes active Jobs to\n    accumulate in the Hotel Reservation namespace.",
+     "problem_type": null,
+     "root_cause": "[fault_spec] component=CronJob/audit-log-archiver; namespace=hotel-reservation || The CronJob 'audit-log-archiver' in namespace 'hotel-reservation' schedules a pod every minute. Its jobTemplate contains two regular containers: a primary container ('archiver') that performs a short archival step and exits cleanly, and a sidecar container ('fluent-bit-sidecar') that runs a long-running log-shipper process. Because Kubernetes considers a Job 'Complete' only when every container in the pod terminates, and the sidecar is a regular (non-native) container with no termination handling, the Pod stays Running indefinitely after the primary exits. Each schedule produces a new active Job that never completes. 'successfulJobsHistoryLimit' does not apply to active Jobs, so they accumulate without bound, visible as Jobs stuck at COMPLETIONS=0/1 and pods whose primary container shows Terminated/Completed while the sidecar shows Running. The acceptable fix is to convert the sidecar to the Kubernetes 1.28+ native pattern by moving it to initContainers with restartPolicy=Always (KEP-753); the kubelet then SIGTERMs the sidecar after the primary exits, allowing the Pod to reach Succeeded and the Job to reach Complete. activeDeadlineSeconds (time-bombs the workload), removing the sidecar container (silently breaks log forwarding to the SIEM), and deleting the CronJob entirely (removes the workload) are all rejected. The agent must also clean up the already-accumulated active Jobs.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.437Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:40.001Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=deployment/jaeger; namespace=social-network || The deployment is scaled to multiple replicas that all reference one ReadWriteOnce PVC while required hostname anti-affinity separates those replicas. With topology-bound storage, only one replica can use the claim, leaving another replica Pending and the deployment only partially Ready."
+    ],
+    "id": "sregym-lite:duplicate_pvc_mounts_social_network",
+    "input": {
+     "app_description": "A social network with unidirectional follow relationships, implemented with loosely-coupled microservices, communicating with each other via Thrift RPCs.",
+     "app_name": "Social Network",
+     "namespace": "social-network",
+     "namespaces": [
+      "social-network"
+     ],
+     "problem_id": "duplicate_pvc_mounts_social_network",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "Multiple pods in `mongodb-rate` service tries to mount same `ReadWriteOnce` pvc",
+     "fault_level": "Cluster Management",
+     "mitigation_oracle": "DuplicatePVCMountsMitigationOracle",
+     "origin": "New",
+     "problem_class": "DuplicatePVCMounts",
+     "problem_doc": "Model duplicate PVC mounts across applications.\n\n    The ``duplicate_pvc_mounts_astronomy_shop`` configuration is deprecated in\n    SREGym 1.1 after reaching 100% overall pass@3.",
+     "problem_type": "Cloud Management System Failure",
+     "root_cause": "[fault_spec] component=deployment/jaeger; namespace=social-network || The deployment is scaled to multiple replicas that all reference one ReadWriteOnce PVC while required hostname anti-affinity separates those replicas. With topology-bound storage, only one replica can use the claim, leaving another replica Pending and the deployment only partially Ready.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:40.001Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.482Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=frontend-proxy; namespace=astronomy-shop || A recent edge/WAF request-filter rule update on deployment `frontend-proxy` introduced the vulnerable regex `^([a-zA-Z]+)*$`. Requests carrying long near-matching `waf` query values trigger catastrophic backtracking in the edge proxy request filter, driving CPU saturation and causing timeouts for otherwise healthy HTTP paths. The fix is to roll back or disable the bad rule, or replace it with a linear-time equivalent such as `^[A-Za-z]+$`."
+    ],
+    "id": "sregym-lite:edge_request_filter_cpu_saturation",
+    "input": {
+     "app_description": "An online shopping platform built with a microservices architecture, showcasing OpenTelemetry instrumentation for distributed tracing across services.",
+     "app_name": "OpenTelemetry Demo Astronomy Shop",
+     "namespace": "astronomy-shop",
+     "namespaces": [
+      "astronomy-shop"
+     ],
+     "problem_id": "edge_request_filter_cpu_saturation",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "A frontend edge/WAF request-filter rule uses a catastrophic-backtracking regex; crafted `waf` query values drive frontend CPU saturation and cause HTTP timeouts.",
+     "fault_level": "App",
+     "mitigation_oracle": "EdgeRequestFilterMitigationOracle",
+     "origin": "New",
+     "problem_class": "EdgeRequestFilterCPUSaturation",
+     "problem_doc": "Inject a vulnerable WAF regex into the existing Astronomy Shop edge proxy.\n\n    The fault does not create any new pods. It patches the existing\n    frontend-proxy container command so the pod starts a small Perl edge\n    request filter on the normal proxy port. Crafted requests from the existing\n    load-generator deployment trigger catastrophic regex backtracking and pin\n    the edge proxy CPU.",
+     "problem_type": "System/Application Software Failure",
+     "root_cause": "[fault_spec] component=frontend-proxy; namespace=astronomy-shop || A recent edge/WAF request-filter rule update on deployment `frontend-proxy` introduced the vulnerable regex `^([a-zA-Z]+)*$`. Requests carrying long near-matching `waf` query values trigger catastrophic backtracking in the edge proxy request filter, driving CPU saturation and causing timeouts for otherwise healthy HTTP paths. The fix is to roll back or disable the bad rule, or replace it with a linear-time equivalent such as `^[A-Za-z]+$`.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.482Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.562Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=deployment/frontend-proxy; namespace=astronomy-shop || Container `frontend-proxy` defines `FRONTEND_HOST` twice. The later value `localhost` shadows the earlier intended value `frontend`, so the edge proxy routes requests to the wrong upstream even though its pod remains Running and Ready."
+    ],
+    "id": "sregym-lite:env_variable_shadowing_astronomy_shop",
+    "input": {
+     "app_description": "An online shopping platform built with a microservices architecture, showcasing OpenTelemetry instrumentation for distributed tracing across services.",
+     "app_name": "OpenTelemetry Demo Astronomy Shop",
+     "namespace": "astronomy-shop",
+     "namespaces": [
+      "astronomy-shop"
+     ],
+     "problem_id": "env_variable_shadowing_astronomy_shop",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "`FRONTEND_HOST` environment variable is incorrectly set to `localhost`",
+     "fault_level": "Container",
+     "mitigation_oracle": "EnvVariableShadowingMitigationOracle",
+     "origin": "New",
+     "problem_class": "EnvVariableShadowing",
+     "problem_doc": "",
+     "problem_type": "Misconfiguration Failure",
+     "root_cause": "[fault_spec] component=deployment/frontend-proxy; namespace=astronomy-shop || Container `frontend-proxy` defines `FRONTEND_HOST` twice. The later value `localhost` shadows the earlier intended value `frontend`, so the edge proxy routes requests to the wrong upstream even though its pod remains Running and Ready.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.562Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.647Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=ClusterRole/configmap-cleanup-controller and configmap/reservation-cleanup-token; namespace=hotel-reservation || ConfigMap `reservation-cleanup-token` is stuck in Terminating with finalizer `cleanup.reservations.io/pending-cleanup`. The finalizer is owned by Deployment `cleanup-controller` using ServiceAccount `cleanup-controller`, but ClusterRole `configmap-cleanup-controller` was changed to read-only and is missing permission to patch ConfigMaps. The controller pod repeatedly logs HTTP 403 Forbidden while trying to remove the finalizer. Restore effective RBAC for the controller ServiceAccount so its normal reconcile loop can remove finalizers and Kubernetes can finish deleting both the current ConfigMap and future cleanup requests."
+    ],
+    "id": "sregym-lite:finalizer_deadlock_controller_hotel_reservation",
+    "input": {
+     "app_description": "A hotel reservation application built with Go and gRPC, providing backend in-memory and persistent databases, a recommender system for hotel recommendations, and a functionality to place reservations.",
+     "app_name": "Hotel Reservation",
+     "namespace": "hotel-reservation",
+     "namespaces": [
+      "hotel-reservation"
+     ],
+     "problem_id": "finalizer_deadlock_controller_hotel_reservation",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": null,
+     "failure_to_simulate": null,
+     "fault_level": null,
+     "mitigation_oracle": "FinalizerDeadlockControllerMitigationOracle",
+     "origin": null,
+     "problem_class": "FinalizerDeadlockController",
+     "problem_doc": "A stuck finalizer that must be fixed by restoring controller RBAC.",
+     "problem_type": null,
+     "root_cause": "[fault_spec] component=ClusterRole/configmap-cleanup-controller and configmap/reservation-cleanup-token; namespace=hotel-reservation || ConfigMap `reservation-cleanup-token` is stuck in Terminating with finalizer `cleanup.reservations.io/pending-cleanup`. The finalizer is owned by Deployment `cleanup-controller` using ServiceAccount `cleanup-controller`, but ClusterRole `configmap-cleanup-controller` was changed to read-only and is missing permission to patch ConfigMaps. The controller pod repeatedly logs HTTP 403 Forbidden while trying to remove the finalizer. Restore effective RBAC for the controller ServiceAccount so its normal reconcile loop can remove finalizers and Kubernetes can finish deleting both the current ConfigMap and future cleanup requests.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.647Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.727Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=service/recommendation; namespace=astronomy-shop || The `recommendation` Service in namespace `astronomy-shop` has `spec.internalTrafficPolicy: Local` set. This instructs kube-proxy to route in-cluster traffic **only** to pods on the **same node** as the calling pod. The `recommendation` Deployment has a single replica, so only one worker node hosts the pod. Any in-cluster caller (e.g. the `frontend` service) running on a different worker node will have its connection silently dropped by kube-proxy \u2014 the socket hangs until the application's own timeout fires, yielding no HTTP response and no TCP error. All Kubernetes health signals appear normal: the `recommendation` pod is Running and Ready, its endpoints are populated, and the Service object exists. The fault is only visible in `service.spec.internalTrafficPolicy` and the mismatch between pod placement and caller node topology. Valid mitigations: change `internalTrafficPolicy` back to `Cluster` (or remove the field), or scale `recommendation` so every worker node has at least one ready pod."
+    ],
+    "id": "sregym-lite:internal_traffic_policy_local_astronomy_shop",
+    "input": {
+     "app_description": "An online shopping platform built with a microservices architecture, showcasing OpenTelemetry instrumentation for distributed tracing across services.",
+     "app_name": "OpenTelemetry Demo Astronomy Shop",
+     "namespace": "astronomy-shop",
+     "namespaces": [
+      "astronomy-shop"
+     ],
+     "problem_id": "internal_traffic_policy_local_astronomy_shop",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "Setting `internalTrafficPolicy: Local` on the astronomy-shop `recommendation` ClusterIP service while its single pod is pinned to one worker node silently drops all in-cluster calls from pods on other nodes.",
+     "fault_level": "Cluster Management",
+     "mitigation_oracle": "InternalTrafficPolicyMitigationOracle",
+     "origin": "New",
+     "problem_class": "InternalTrafficPolicyLocalAstronomyShop",
+     "problem_doc": "Sets ``internalTrafficPolicy: Local`` on the astronomy-shop\n    ``recommendation`` ClusterIP service and pins its single pod to one\n    worker node, leaving all other worker nodes unable to reach the service\n    in-cluster.",
+     "problem_type": "Network Failure",
+     "root_cause": "[fault_spec] component=service/recommendation; namespace=astronomy-shop || The `recommendation` Service in namespace `astronomy-shop` has `spec.internalTrafficPolicy: Local` set. This instructs kube-proxy to route in-cluster traffic **only** to pods on the **same node** as the calling pod. The `recommendation` Deployment has a single replica, so only one worker node hosts the pod. Any in-cluster caller (e.g. the `frontend` service) running on a different worker node will have its connection silently dropped by kube-proxy \u2014 the socket hangs until the application's own timeout fires, yielding no HTTP response and no TCP error. All Kubernetes health signals appear normal: the `recommendation` pod is Running and Ready, its endpoints are populated, and the Service object exists. The fault is only visible in `service.spec.internalTrafficPolicy` and the mismatch between pod placement and caller node topology. Valid mitigations: change `internalTrafficPolicy` back to `Cluster` (or remove the field), or scale `recommendation` so every worker node has at least one ready pod.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.727Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.686Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=kafka topic/orders-fulfillment; namespace=astronomy-shop || An unprocessable ('poison-pill') record was published to the `orders-fulfillment` Kafka topic. The `orders-validator` consumer group cannot deserialize this record, so it never commits the offset and halts at that position (head-of-line blocking). All consumer pods stay Running and Ready, but the consumer-group committed offset is frozen and partition lag grows without bound \u2014 order-fulfillment processing has silently stopped. Restarting or rescaling the consumer does not help: a restarted pod re-reads the same uncommitted offset and stalls again, because the fault state lives in the Kafka log, outside the Kubernetes control plane. Mitigation requires advancing the consumer group past the poison record (skip-to-offset / dead-letter-queue style) without skipping the valid records queued behind it."
+    ],
+    "id": "sregym-lite:kafka_poison_pill_hol_block",
+    "input": {
+     "app_description": "An online shopping platform built with a microservices architecture, showcasing OpenTelemetry instrumentation for distributed tracing across services.",
+     "app_name": "OpenTelemetry Demo Astronomy Shop",
+     "namespace": "astronomy-shop",
+     "namespaces": [
+      "astronomy-shop"
+     ],
+     "problem_id": "kafka_poison_pill_hol_block",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": null,
+     "failure_to_simulate": null,
+     "fault_level": null,
+     "mitigation_oracle": "DataPlaneProgressOracle",
+     "origin": null,
+     "problem_class": "KafkaPoisonPillHOLBlock",
+     "problem_doc": "",
+     "problem_type": null,
+     "root_cause": "[fault_spec] component=kafka topic/orders-fulfillment; namespace=astronomy-shop || An unprocessable ('poison-pill') record was published to the `orders-fulfillment` Kafka topic. The `orders-validator` consumer group cannot deserialize this record, so it never commits the offset and halts at that position (head-of-line blocking). All consumer pods stay Running and Ready, but the consumer-group committed offset is frozen and partition lag grows without bound \u2014 order-fulfillment processing has silently stopped. Restarting or rescaling the consumer does not help: a restarted pod re-reads the same uncommitted offset and stalls again, because the fault state lives in the Kafka log, outside the Kubernetes control plane. Mitigation requires advancing the consumer group past the poison record (skip-to-offset / dead-letter-queue style) without skipping the valid records queued behind it.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.686Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.604Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=MutatingWebhookConfiguration/gatekeeper-mutating-webhook-configuration; namespace=social-network || The fault is the cluster-scoped MutatingWebhookConfiguration named `gatekeeper-mutating-webhook-configuration`. It intercepts all pod CREATE operations in the `social-network` namespace and injects a JSON patch that overwrites the first container's `resources.requests.memory` and `resources.limits.memory` to `16Mi`. Four companion MutatingWebhookConfigurations share the same namespaceSelector and backend Service, but each remains inert via different mechanisms (rules targeting CRDs that aren't installed, or objectSelectors requiring opt-in pod labels that no pod carries). The webhook backend server that executes the patch is not the fault \u2014 it is functioning exactly as configured. The fault is the webhook configuration itself being present. The Deployment spec reports legitimate memory values (`requests: 128Mi`, `limits: 256Mi`); the actual running pods have `requests: 16Mi` / `limits: 16Mi` and are immediately OOMKilled on startup. The discrepancy between the Deployment spec and the running pod resources is the diagnostic signal."
+    ],
+    "id": "sregym-lite:mutating_webhook_resource_limits_social_network",
+    "input": {
+     "app_description": "A social network with unidirectional follow relationships, implemented with loosely-coupled microservices, communicating with each other via Thrift RPCs.",
+     "app_name": "Social Network",
+     "namespace": "social-network",
+     "namespaces": [
+      "social-network"
+     ],
+     "problem_id": "mutating_webhook_resource_limits_social_network",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "A `MutatingWebhookConfiguration` silently overwrites the memory limit of every new pod in `social-network` to `16Mi`, causing immediate OOMKill. The Deployment spec is untouched \u2014 the discrepancy between spec and running pod is the only diagnostic signal.",
+     "fault_level": "Cluster Management",
+     "mitigation_oracle": "MutatingWebhookResourceLimitsMitigationOracle",
+     "origin": "New",
+     "problem_class": "MutatingWebhookResourceLimits",
+     "problem_doc": "Pre-patch nginx-thrift with legitimate-looking memory resources, then\n    deploy a mutating admission webhook that silently rewrites both\n    ``requests.memory`` and ``limits.memory`` of every new pod to\n    ``INJECTED_MEMORY``.",
+     "problem_type": "Misconfiguration Failure",
+     "root_cause": "[fault_spec] component=MutatingWebhookConfiguration/gatekeeper-mutating-webhook-configuration; namespace=social-network || The fault is the cluster-scoped MutatingWebhookConfiguration named `gatekeeper-mutating-webhook-configuration`. It intercepts all pod CREATE operations in the `social-network` namespace and injects a JSON patch that overwrites the first container's `resources.requests.memory` and `resources.limits.memory` to `16Mi`. Four companion MutatingWebhookConfigurations share the same namespaceSelector and backend Service, but each remains inert via different mechanisms (rules targeting CRDs that aren't installed, or objectSelectors requiring opt-in pod labels that no pod carries). The webhook backend server that executes the patch is not the fault \u2014 it is functioning exactly as configured. The fault is the webhook configuration itself being present. The Deployment spec reports legitimate memory values (`requests: 128Mi`, `limits: 256Mi`); the actual running pods have `requests: 16Mi` / `limits: 16Mi` and are immediately OOMKilled on startup. The discrepancy between the Deployment spec and the running pod resources is the diagnostic signal.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.604Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.846Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=resourcequota/memory-limit-quota; namespace=hotel-reservation || Namespace-wide ResourceQuota `memory-limit-quota` enforces memory declarations, but the existing workloads do not declare them. Recreating deployment `search` exposes the problem immediately: admission rejects its replacement pod with `must specify memory`. Other noncompliant workloads are also vulnerable on restart even though their existing pods continue running."
+    ],
+    "id": "sregym-lite:namespace_memory_limit",
+    "input": {
+     "app_description": "A hotel reservation application built with Go and gRPC, providing backend in-memory and persistent databases, a recommender system for hotel recommendations, and a functionality to place reservations.",
+     "app_name": "Hotel Reservation",
+     "namespace": "hotel-reservation",
+     "namespaces": [
+      "hotel-reservation"
+     ],
+     "problem_id": "namespace_memory_limit",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "Pods in `search` service will get stuck in pending as they can't be scheduled due to memory limit",
+     "fault_level": "OS",
+     "mitigation_oracle": "NamespaceMemoryLimitMitigationOracle",
+     "origin": "New",
+     "problem_class": "NamespaceMemoryLimit",
+     "problem_doc": "",
+     "problem_type": "Cloud Management System Failure",
+     "root_cause": "[fault_spec] component=resourcequota/memory-limit-quota; namespace=hotel-reservation || Namespace-wide ResourceQuota `memory-limit-quota` enforces memory declarations, but the existing workloads do not declare them. Recreating deployment `search` exposes the problem immediately: admission rejects its replacement pod with `must specify memory`. Other noncompliant workloads are also vulnerable on restart even though their existing pods continue running.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.846Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.523Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=recommendation; namespace=hotel-reservation || A NetworkPolicy `deny-all-recommendation` blocks all ingress and egress traffic for pods labeled `io.kompose.service=recommendation`, creating complete network isolation for the target workload. Service-to-service communication to and from the component fails, so dependent request paths break even if pods remain Running. Users observe hard failures/timeouts on flows that require this service."
+    ],
+    "id": "sregym-lite:network_policy_block",
+    "input": {
+     "app_description": "A hotel reservation application built with Go and gRPC, providing backend in-memory and persistent databases, a recommender system for hotel recommendations, and a functionality to place reservations.",
+     "app_name": "Hotel Reservation",
+     "namespace": "hotel-reservation",
+     "namespaces": [
+      "hotel-reservation"
+     ],
+     "problem_id": "network_policy_block",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "Service isolation issues caused by network partitioning, firewall configuration errors, or overly strict security policies",
+     "fault_level": "Cluster Management",
+     "mitigation_oracle": "NetworkPolicyMitigationOracle",
+     "origin": "New",
+     "problem_class": "NetworkPolicyBlock",
+     "problem_doc": "",
+     "problem_type": "Network Failure",
+     "root_cause": "[fault_spec] component=recommendation; namespace=hotel-reservation || A NetworkPolicy `deny-all-recommendation` blocks all ingress and egress traffic for pods labeled `io.kompose.service=recommendation`, creating complete network isolation for the target workload. Service-to-service communication to and from the component fails, so dependent request paths break even if pods remain Running. Users observe hard failures/timeouts on flows that require this service.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.523Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:40.039Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=deployment/custom-service; namespace=social-network || The rollout strategy is set to maxUnavailable=100% and maxSurge=0 while an init container hangs, so an update drains all old replicas before new ones become Ready and the deployment remains stuck with prolonged service unavailability."
+    ],
+    "id": "sregym-lite:rolling_update_misconfigured_social_network",
+    "input": {
+     "app_description": "A social network with unidirectional follow relationships, implemented with loosely-coupled microservices, communicating with each other via Thrift RPCs.",
+     "app_name": "Social Network",
+     "namespace": "social-network",
+     "namespaces": [
+      "social-network"
+     ],
+     "problem_id": "rolling_update_misconfigured_social_network",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "No pods will be available since they get stuck with a contradictory update configuration",
+     "fault_level": "Container",
+     "mitigation_oracle": "RollingUpdateMitigationOracle",
+     "origin": "New",
+     "problem_class": "RollingUpdateMisconfigured",
+     "problem_doc": "",
+     "problem_type": "Misconfiguration Failure",
+     "root_cause": "[fault_spec] component=deployment/custom-service; namespace=social-network || The rollout strategy is set to maxUnavailable=100% and maxSurge=0 while an init container hangs, so an update drains all old replicas before new ones become Ready and the deployment remains stuck with prolonged service unavailability.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:40.039Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:40.079Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=search-to-rate RPC path; namespace=hotel-reservation || The search service's rate RPC policy permits three attempts with a short per-attempt deadline. After a transient traffic burst fills the rate service's bounded backend queue, calls exceed their deadline but continue consuming downstream capacity. Search retries those expired calls, so internal rate requests remain above backend capacity even after external traffic returns to normal. The sustaining cause is the timeout/retry/queue feedback loop, not the expired burst. A diagnosis that only calls the static rate limit too low under normal traffic is incomplete: normal traffic is below that limit and the bounded trigger plus post-trigger amplification are required parts of the causal explanation."
+    ],
+    "id": "sregym-lite:search_rate_retry_collapse_hotel_reservation",
+    "input": {
+     "app_description": "A hotel reservation application built with Go and gRPC, providing backend in-memory and persistent databases, a recommender system for hotel recommendations, and a functionality to place reservations.",
+     "app_name": "Hotel Reservation",
+     "namespace": "hotel-reservation",
+     "namespaces": [
+      "hotel-reservation"
+     ],
+     "problem_id": "search_rate_retry_collapse_hotel_reservation",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "A temporary search-traffic burst fills the rate-service queue; timeout retries then sustain overload after traffic returns to normal.",
+     "fault_level": "App",
+     "mitigation_oracle": "SearchRateRetryMitigationOracle",
+     "origin": "New",
+     "problem_class": "SearchRateRetryCollapse",
+     "problem_doc": "Create a queue/timeout/retry feedback loop with a bounded trigger.",
+     "problem_type": "Metastable Failure",
+     "root_cause": "[fault_spec] component=search-to-rate RPC path; namespace=hotel-reservation || The search service's rate RPC policy permits three attempts with a short per-attempt deadline. After a transient traffic burst fills the rate service's bounded backend queue, calls exceed their deadline but continue consuming downstream capacity. Search retries those expired calls, so internal rate requests remain above backend capacity even after external traffic returns to normal. The sustaining cause is the timeout/retry/queue feedback loop, not the expired burst. A diagnosis that only calls the static rate limit too low under normal traffic is incomplete: normal traffic is below that limit and the bounded trigger plus post-trigger amplification are required parts of the causal explanation.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:40.079Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.924Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=deployment/product-catalog; namespace=astronomy-shop || PostgreSQL credentials and the Kubernetes Secret were rotated, but the active product-catalog pod continues using the database connection string captured at container startup. After existing database sessions are terminated, product-catalog cannot reconnect until its runtime credential is made consistent with the backend."
+    ],
+    "id": "sregym-lite:secret_rotation_stale_env_credentials_astronomy_shop",
+    "input": {
+     "app_description": "An online shopping platform built with a microservices architecture, showcasing OpenTelemetry instrumentation for distributed tracing across services.",
+     "app_name": "OpenTelemetry Demo Astronomy Shop",
+     "namespace": "astronomy-shop",
+     "namespaces": [
+      "astronomy-shop"
+     ],
+     "problem_id": "secret_rotation_stale_env_credentials_astronomy_shop",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": null,
+     "failure_to_simulate": null,
+     "fault_level": null,
+     "mitigation_oracle": "SecretRotationStaleEnvMitigation",
+     "origin": null,
+     "problem_class": "SecretRotationStaleEnvCredentialsAstronomyShop",
+     "problem_doc": "Rotate product-catalog database credentials without refreshing the running pod environment.",
+     "problem_type": null,
+     "root_cause": "[fault_spec] component=deployment/product-catalog; namespace=astronomy-shop || PostgreSQL credentials and the Kubernetes Secret were rotated, but the active product-catalog pod continues using the database connection string captured at container startup. After existing database sessions are terminated, product-catalog cannot reconnect until its runtime credential is made consistent with the backend.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.924Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.766Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=configmap/coredns; namespace=kube-system || The CoreDNS ConfigMap contains an NXDOMAIN template for `user-service.social-network.svc.cluster.local`, so in-cluster lookups for this service name fail at DNS resolution time. Dependent services cannot resolve or connect to the target even though pods may be healthy and listening. Users observe request timeouts and cascading failures on flows that depend on this service endpoint."
+    ],
+    "id": "sregym-lite:service_dns_resolution_failure_social_network",
+    "input": {
+     "app_description": "A social network with unidirectional follow relationships, implemented with loosely-coupled microservices, communicating with each other via Thrift RPCs.",
+     "app_name": "Social Network",
+     "namespace": "social-network",
+     "namespaces": [
+      "social-network"
+     ],
+     "problem_id": "service_dns_resolution_failure_social_network",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "Modify the configuration of CoreDNS, making DNS resolution to `user-service` service fail",
+     "fault_level": "Cluster Management",
+     "mitigation_oracle": "DNSResolutionMitigationOracle",
+     "origin": "New",
+     "problem_class": "ServiceDNSResolutionFailure",
+     "problem_doc": "",
+     "problem_type": "Network Failure",
+     "root_cause": "[fault_spec] component=configmap/coredns; namespace=kube-system || The CoreDNS ConfigMap contains an NXDOMAIN template for `user-service.social-network.svc.cluster.local`, so in-cluster lookups for this service name fail at DNS resolution time. Dependent services cannot resolve or connect to the target even though pods may be healthy and listening. Users observe request timeouts and cascading failures on flows that depend on this service endpoint.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.766Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.809Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=service/frontend; namespace=hotel-reservation || The `frontend` Service selector has been broadened to `service-route=frontend`, and that label is present on both the intended frontend pods and the unintended `search` pods. The frontend Service still has endpoints, but the endpoint list is polluted with a search pod. The search container listens on port 8082, not the frontend targetPort 5000, so traffic routed through the frontend Service can intermittently hit a pod that cannot serve frontend requests."
+    ],
+    "id": "sregym-lite:service_wrong_pod_selection_hotel_reservation",
+    "input": {
+     "app_description": "A hotel reservation application built with Go and gRPC, providing backend in-memory and persistent databases, a recommender system for hotel recommendations, and a functionality to place reservations.",
+     "app_name": "Hotel Reservation",
+     "namespace": "hotel-reservation",
+     "namespaces": [
+      "hotel-reservation"
+     ],
+     "problem_id": "service_wrong_pod_selection_hotel_reservation",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "The `frontend` Service selector is broadened so it selects both intended `frontend` pods and an unintended `search` pod, causing non-empty but polluted endpoints and possible request failures.",
+     "fault_level": "Cluster Management",
+     "mitigation_oracle": "WrongPodSelectionMitigationOracle",
+     "origin": "New",
+     "problem_class": "ServiceWrongPodSelectionHotelReservation",
+     "problem_doc": "",
+     "problem_type": "Misconfiguration Failure",
+     "root_cause": "[fault_spec] component=service/frontend; namespace=hotel-reservation || The `frontend` Service selector has been broadened to `service-route=frontend`, and that label is present on both the intended frontend pods and the unintended `search` pods. The frontend Service still has endpoints, but the endpoint list is polluted with a search pod. The search container listens on port 8082, not the frontend targetPort 5000, so traffic routed through the frontend Service can intermittently hit a pod that cannot serve frontend requests.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.809Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.962Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=deployment/checkout; namespace=astronomy-shop || Two faults are active at the same time: (1) PRODUCT_CATALOG_ADDR points to the wrong backend port (8082 instead of 8080), and (2) the deployment is pinned to a non-existent node via nodeSelector, keeping pods Pending. Symptoms include both routing failures from bad service endpoints and unschedulable pod events from node selector mismatch."
+    ],
+    "id": "sregym-lite:unschedulable_incorrect_port_assignment",
+    "input": {
+     "app_description": "An online shopping platform built with a microservices architecture, showcasing OpenTelemetry instrumentation for distributed tracing across services.",
+     "app_name": "OpenTelemetry Demo Astronomy Shop",
+     "namespace": "astronomy-shop",
+     "namespaces": [
+      "astronomy-shop"
+     ],
+     "problem_id": "unschedulable_incorrect_port_assignment",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": null,
+     "failure_to_simulate": null,
+     "fault_level": null,
+     "mitigation_oracle": "CompoundedOracle",
+     "origin": null,
+     "problem_class": "IncorrectPortAssignment",
+     "problem_doc": "Model incorrect port assignment variants.\n\n    The ``incorrect_port_assignment`` configuration is deprecated in SREGym\n    1.1 after reaching 100% overall pass@3. The unschedulable variant remains\n    active.",
+     "problem_type": null,
+     "root_cause": "[fault_spec] component=deployment/checkout; namespace=astronomy-shop || Two faults are active at the same time: (1) PRODUCT_CATALOG_ADDR points to the wrong backend port (8082 instead of 8080), and (2) the deployment is pinned to a non-existent node via nodeSelector, keeping pods Pending. Symptoms include both routing failures from bad service endpoints and unschedulable pod events from node selector mismatch.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.962Z"
+   },
+   {
+    "createdAt": "2026-10-23T10:03:39.882Z",
+    "datasetId": "cmvksxnqr0003pa07bgxrjc0e",
+    "datasetName": "sregym-lite",
+    "expectedOutput": [
+     "[fault_spec] component=service/valkey-cart; namespace=astronomy-shop || Valkey was reconfigured at runtime to require a password (`CONFIG SET requirepass`) that its clients do not have, so the cart service's unauthenticated connections are rejected with NOAUTH, the cart service cannot start or serve requests, and cart-related operations fail."
+    ],
+    "id": "sregym-lite:valkey_auth_disruption",
+    "input": {
+     "app_description": "An online shopping platform built with a microservices architecture, showcasing OpenTelemetry instrumentation for distributed tracing across services.",
+     "app_name": "OpenTelemetry Demo Astronomy Shop",
+     "namespace": "astronomy-shop",
+     "namespaces": [
+      "astronomy-shop"
+     ],
+     "problem_id": "valkey_auth_disruption",
+     "stages": [
+      "diagnosis",
+      "mitigation"
+     ]
+    },
+    "mediaReferences": [],
+    "metadata": {
+     "cause_count": 1,
+     "diagnosis_oracle": "LLMAsAJudgeOracle",
+     "failure_level": "App",
+     "failure_to_simulate": "The password in valkey is invalidated, therefore dependent services cannot work",
+     "fault_level": "App",
+     "mitigation_oracle": "ValkeyAuthMitigation",
+     "origin": "New",
+     "problem_class": "ValkeyAuthDisruption",
+     "problem_doc": "",
+     "problem_type": "Security Failure",
+     "root_cause": "[fault_spec] component=service/valkey-cart; namespace=astronomy-shop || Valkey was reconfigured at runtime to require a password (`CONFIG SET requirepass`) that its clients do not have, so the cart service's unauthenticated connections are rejected with NOAUTH, the cart service cannot start or serve requests, and cart-related operations fail.",
+     "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+     "sregym_suite": "sregym-lite"
+    },
+    "sourceObservationId": null,
+    "sourceTraceId": null,
+    "status": "ACTIVE",
+    "updatedAt": "2026-10-23T10:03:39.882Z"
+   }
+  ],
+  "metadata": {
+   "source": "https://github.com/SREGym/SREGym",
+   "sregym_ref": "0d8e7b73214c44e99c97ca1af2934290aa3b826b",
+   "suite": "sregym-lite"
+  },
+  "name": "sregym-lite",
+  "projectId": "benchmark",
+  "updatedAt": "2026-10-23T10:03:05.715Z"
+ }
+]

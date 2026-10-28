@@ -1,0 +1,45 @@
+{
+ "counts": {
+  "dataset_items": {
+   "sregym-lite": 17
+  },
+  "dataset_runs": {
+   "holmes-noise-run-1": 5,
+   "holmes-noise-run-2-steps100": 1,
+   "replay-holmes-noise-run-1-1792767906": 5,
+   "replay-holmes-noise-run-2-steps100-1792767906": 1
+  },
+  "evaluators": 1,
+  "models": 1,
+  "observations": 398,
+  "scores": 102,
+  "scores_by_name": {
+   "diagnosis-characterization": 6,
+   "diagnosis-localization": 6,
+   "diagnosis-pass": 6,
+   "diagnosis-scope": 6,
+   "diagnosis-score": 6,
+   "holmes-cost-usd": 6,
+   "holmes-input-tokens": 6,
+   "holmes-llm-calls": 6,
+   "holmes-output-tokens": 6,
+   "run-complete": 6,
+   "sdk-diagnosis-characterization": 6,
+   "sdk-diagnosis-localization": 6,
+   "sdk-diagnosis-pass": 6,
+   "sdk-diagnosis-scope": 6,
+   "sdk-diagnosis-score": 6,
+   "sregym": 6,
+   "time-to-diagnose-s": 6
+  },
+  "traces": 12,
+  "traces_by_environment": {
+   "sdk-experiment": 6,
+   "sregym": 6
+  }
+ },
+ "exported_at": "2026-10-26T05:55:48+00:00",
+ "holmesgpt_commit": "4efc18f0cd1fc3e65229bb27d236ed057c6f2424",
+ "source_langfuse_version": "3.225.11",
+ "sregym_commit": "0d8e7b73214c44e99c97ca1af2934290aa3b826b"
+}

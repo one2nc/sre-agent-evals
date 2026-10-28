@@ -1,0 +1,37 @@
+[
+ {
+  "createdAt": "2026-10-23T11:45:35.599Z",
+  "id": "cmvkwlh0v001kpa07viy81rih",
+  "inputPrice": 2e-06,
+  "isLangfuseManaged": false,
+  "matchPattern": "(?i)^(openrouter/)?anthropic/claude-sonnet-5\\.5$",
+  "modelName": "openrouter/anthropic/claude-sonnet-5.5",
+  "outputPrice": 1e-05,
+  "prices": {
+   "input": {
+    "price": 2e-06
+   },
+   "output": {
+    "price": 1e-05
+   }
+  },
+  "pricingTiers": [
+   {
+    "conditions": [],
+    "id": "cmvkwlh0v001kpa07viy81rih_tier_default",
+    "isDefault": true,
+    "name": "Standard",
+    "prices": {
+     "input": 2e-06,
+     "output": 1e-05
+    },
+    "priority": 0
+   }
+  ],
+  "startDate": null,
+  "tokenizerConfig": null,
+  "tokenizerId": null,
+  "totalPrice": null,
+  "unit": "TOKENS"
+ }
+]

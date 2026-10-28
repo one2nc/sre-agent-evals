@@ -1,0 +1,73 @@
+{
+ "evaluators": [
+  {
+   "createdAt": "2026-10-23T15:01:03.166Z",
+   "evaluationRuleCount": 1,
+   "id": "cmvl3ku2m0021pa07jhtwu6il",
+   "modelConfig": {
+    "model": "gpt-5.6-luna",
+    "provider": "openrouter"
+   },
+   "name": "sregym",
+   "outputDefinition": {
+    "dataType": "NUMERIC",
+    "reasoning": {
+     "description": "Go through the checklist in order. For each question give its ID, Yes or No, and at most 15 words of evidence from the diagnosis. Then state how many of the 9 answers are Yes."
+    },
+    "score": {
+     "description": "Return the number of Yes answers divided by 9, rounded to two decimals (for example 7 Yes = 0.78). A score of 0.70 or more means the diagnosis is correct. If the diagnosis is empty or says the agent produced no answer, return 0."
+    }
+   },
+   "prompt": "You are an expert SRE evaluator assessing an AI agent's root cause analysis.\n\nYou are given:\n1. The ground-truth root cause, written as\n   \"[fault_spec] component=<...>; namespace=<...> || <description>\".\n2. The agent's diagnosis: what the agent claims happened.\n3. A checklist of 9 Yes/No questions in 3 dimensions.\n\nRules:\n- Answer based ONLY on what is explicitly stated in the diagnosis.\n- Do not infer information that is not in the texts.\n- \"Yes\" always means the positive or correct outcome is present.\n- Treat each question independently.\n- Use the ground-truth root cause as the authoritative reference.\n\n# Ground-truth root cause\n{{expected_output}}\n\n# Agent diagnosis\n{{output}}\n\n# Checklist\n\nD1 Fault Localization: does the diagnosis identify the component where the fault originated? The fault spec's component is the origin; any other component is secondary.\n- D1-Q1: Does the diagnosis name the same service, deployment, pod, node or infrastructure component that the ground truth identifies as the fault origin?\n- D1-Q2: Does the diagnosis distinguish the fault origin from secondary or cascading failure points in the ground truth? It must point to the root-cause component, not a downstream victim.\n- D1-Q3: Does the diagnosis avoid misidentifying a healthy component as the fault origin?\n\nD2 Fault Characterization: does the diagnosis describe what went wrong with that component?\n- D2-Q1: Does the diagnosis identify the same injected mechanism as the ground truth (for example wrong port, missing env var, wrong image, wrong selector, memory limit, probe misconfiguration)?\n- D2-Q2: Does the diagnosis include concrete mutated details (for example the env var or key, the wrong value, port, selector, image tag, resource limit)?\n- D2-Q3: Does the diagnosis avoid attributing the fault to an incorrect or unrelated fault type?\n\nD3 Scope Precision: does the diagnosis scope the fault to the right components and describe the impact correctly?\n- D3-Q1: Does the diagnosis avoid blaming components that the ground truth does not identify as contributing to the fault?\n- D3-Q2: Does the diagnosis include all components the ground truth lists as contributing to or affected by the fault?\n- D3-Q3: Does the diagnosis describe the impact or symptom consistently with the ground truth?",
+   "scope": "project",
+   "type": "llm_as_judge",
+   "updatedAt": "2026-10-23T15:01:03.166Z",
+   "variables": [
+    "expected_output",
+    "output"
+   ],
+   "version": 2
+  }
+ ],
+ "rules": [
+  {
+   "createdAt": "2026-10-23T15:01:20.092Z",
+   "enabled": true,
+   "evaluator": {
+    "id": "cmvl3ku2m0021pa07jhtwu6il",
+    "name": "sregym",
+    "scope": "project",
+    "type": "llm_as_judge"
+   },
+   "filter": [
+    {
+     "column": "datasetId",
+     "operator": "any of",
+     "type": "stringOptions",
+     "value": [
+      "cmvksxnqr0003pa07bgxrjc0e",
+      "cmvnh1kaq0052pa077fu6pcfy"
+     ]
+    }
+   ],
+   "id": "d05f9e15-0d13-4dfa-9642-4bcc69781a11",
+   "mapping": [
+    {
+     "source": "expected_output",
+     "variable": "expected_output"
+    },
+    {
+     "source": "output",
+     "variable": "output"
+    }
+   ],
+   "name": "sregym",
+   "pausedMessage": null,
+   "pausedReason": null,
+   "sampling": 1,
+   "status": "active",
+   "target": "experiment",
+   "updatedAt": "2026-10-25T07:06:41.235Z"
+  }
+ ]
+}
